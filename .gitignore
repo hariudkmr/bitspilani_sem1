@@ -1,52 +1,29 @@
-# Prerequisites
-*.d
+#Proteus Backup Files
+Proteus_WS/*/Project Backups
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+#Mikro C Files
 
-# Linker output
-*.ilk
-*.map
-*.exp
+# Backup
+MikroC_WS/*.pdsbak
 
-# Precompiled Headers
-*.gch
-*.pch
+# Debug
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
+# Generated files
+*.workspace
+*.log
+*.bmk
+*.brk
+*.cfg
+*.dbg
+*.dct
+*.dlt
 *.hex
-
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+*.lst
+*.dic
+*_callertable.txt
+*.user.dic
+*.asm
+*.c.ini
+*.h.ini
+*.cp
+*.mcl
