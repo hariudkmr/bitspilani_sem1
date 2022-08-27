@@ -27,3 +27,12 @@ MikroC_WS/*.pdsbak
 *.h.ini
 *.cp
 *.mcl
+
+#Matlab
+*.slx.autosave
+*.slxc
+*.hex
+*.elf
+*.eep
+Matlab_WS/ML_1/slprj/
+Matlab_WS/ML_1/Led_Blinking_ert_rtw/
