@@ -10,7 +10,7 @@ void LCDOutput(unsigned int);
 void Delay(unsigned int);
 unsigned char k[10],x;
 unsigned char n,m;
-unsigned int Num1,Num2,Sum;
+unsigned int hivalue,lovalue,value;
 char Lowstring[] = "Low Voltage";
 char Highstring[] = "High Voltage";
 char *ptr;
@@ -39,12 +39,18 @@ void update_lcd(unsigned int num)
  void main()
  {
      Init();
-     Num1 = 0;                               //Assign the first value
-     Num2 = 255;                               //Assign the second value
+     ADCON0=0x00;  // sampling freq=osc_freq/2,ADC off initially
+     ADCON0=0x81;                            //configure the A/D control registers
+     ADCON1=0x00;
      while(1)
      {
-       update_lcd(Num1++);
-       update_lcd(Num2--);
+
+       ADCON0|=0X04;                           //start ADC conversion
+       while(ADCON0&0X04);                     //wait for conversion to complete
+       lovalue=ADRESL>>6;                      //read the low 8 bit value
+       hivalue=ADRESH;                         //read the upper 8 bit value
+       value=((unsigned int)hivalue<<2)+(unsigned int)lovalue;
+       update_lcd(value);
      }
  }
 /*end main program*/
