@@ -10,18 +10,18 @@ void LCDOutput(unsigned int);
 void Delay(unsigned int);
 unsigned char k[10],x;
 unsigned char n,m;
-unsigned int hivalue,lovalue,value;
-char Lowstring[] = "Low Voltage";
+unsigned int hivalue,lovalue,adcv;
+long value;
+char Lowstring[] = "Low  Voltage";
 char Highstring[] = "High Voltage";
 char *ptr;
 
 
 void update_lcd(unsigned int num)
 {
-   LCD_Command(0x01);            //clear display screen
    LCD_Command(0x80);               //Initialize cursor to first Position
    LCDOutput(num);
-   if(num > 100)
+   if(num > 105)
    {
        ptr = (char *)Highstring;
    }
@@ -32,25 +32,27 @@ void update_lcd(unsigned int num)
    LCD_Command(0xC0);
    while(*ptr != '\0')
       LCD_Data(*ptr++);
-   Delay_ms(1000);
+  Delay(100);
 }
 
 
  void main()
  {
      Init();
-     ADCON0=0x00;  // sampling freq=osc_freq/2,ADC off initially
+
+     ADCON0=0x00;                            // sampling freq=osc_freq/2,ADC off initially
      ADCON0=0x81;                            //configure the A/D control registers
-     ADCON1=0x00;
+     ADCON1=0x8E;
+
      while(1)
      {
-
        ADCON0|=0X04;                           //start ADC conversion
        while(ADCON0&0X04);                     //wait for conversion to complete
-       lovalue=ADRESL>>6;                      //read the low 8 bit value
+       lovalue=ADRESL;                         //read the low 8 bit value
        hivalue=ADRESH;                         //read the upper 8 bit value
-       value=((unsigned int)hivalue<<2)+(unsigned int)lovalue;
-       update_lcd(value);
+       value=((unsigned int)hivalue<<8)+(unsigned int)lovalue;
+       adcv = (value*150)/1023 ;
+       update_lcd(adcv);
      }
  }
 /*end main program*/
@@ -58,6 +60,7 @@ void Init(void)
 {
   TRISD = 0x00;                   //Initialize the PORTD as output
   TRISE = 0x00;                   //Initialise the PORT C as output
+  TRISA = 0x01;
   LCD_Command(0x38);              //Initialize the 2 lines and 5*7 Matrix LCD
   Delay(100);
   LCD_Command(0x38);
@@ -76,25 +79,35 @@ void Init(void)
 
 /*define the output function*/
 /*BCD conversion*/
-void LCDOutput(unsigned int i)
+void LCDOutput(unsigned int num)
 {
-    unsigned char s,j=1;
-    m=i;                                  //assign formal argument to other variable
-    while(m!=0)                           //check that value is zero or not
-    {       
-        s = m-(m/10)*10;
-                                          //store the reminder of m/10 in s
-       k[j] = s;                          //move s to an array
-       j++;                               //Increment the array address
-       m = m/10;                          //Divide the value by 10, store the Quotient in'm'
-    }
-    k[j] = '\0';                          //assign the NULL value at the end of the array
-    j = j-1;                              //decrement the array address
-    while(j!=0)                           //check the k[] array address is zero or not
+    unsigned int j;
+    unsigned int i;
+    unsigned int tdata;
+
+    tdata = num   ;
+    if(tdata == 0)
     {
-      n=0x30+k[j];                        //convert to ascii value
-      Lcd_Data(n);                        //pass that value to display function
-      j--;                                //decrement the array address
+       LCD_Data(0x30);                     //assign formal argument to other variable
+    }
+    else
+    {
+        j=0;
+        while (tdata != 0)
+		{
+			i = tdata - (tdata / 10) * 10;
+			k[j] = i+0x30;
+			tdata = tdata / 10;
+			j++;
+		}
+		k[j] = '\0';
+                //LCD_Data(k[3]);
+                LCD_Data(k[2]);
+                LCD_Data(k[1]);
+                LCD_Data(0x2E);
+                LCD_Data(k[0]);
+                LCD_Data('V');
+
     }
 }
 
@@ -115,7 +128,7 @@ void LCD_Data(char i)
     PORTE&=~0x02;             // RS=1,R/W=0,EN=0
     Delay(100);
 }
-    
+
 void Delay(unsigned int DelayCount)
 {
     while(--DelayCount);
