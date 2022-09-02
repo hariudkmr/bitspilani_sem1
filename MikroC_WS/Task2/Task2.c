@@ -59,7 +59,7 @@ void update_lcd(unsigned int num)
 void Init(void)
 {
   TRISD = 0x00;                   //Initialize the PORTD as output
-  TRISE = 0x00;                   //Initialise the PORT C as output
+  TRISC = 0x00;                   //Initialise the PORT C as output
   TRISA = 0x01;
   LCD_Command(0x38);              //Initialize the 2 lines and 5*7 Matrix LCD
   Delay(100);
@@ -89,18 +89,22 @@ void LCDOutput(unsigned int num)
     if(tdata == 0)
     {
        LCD_Data(0x30);                     //assign formal argument to other variable
-    }
+       LCD_Data(0x30);
+       LCD_Data(0x2E);
+       LCD_Data(0x30);
+       LCD_Data('V');
+     }
     else
     {
         j=0;
         while (tdata != 0)
-		{
-			i = tdata - (tdata / 10) * 10;
-			k[j] = i+0x30;
-			tdata = tdata / 10;
-			j++;
-		}
-		k[j] = '\0';
+                {
+                        i = tdata - (tdata / 10) * 10;
+                        k[j] = i+0x30;
+                        tdata = tdata / 10;
+                        j++;
+                }
+                k[j] = '\0';
                 //LCD_Data(k[3]);
                 LCD_Data(k[2]);
                 LCD_Data(k[1]);
@@ -113,19 +117,19 @@ void LCDOutput(unsigned int num)
 
 void LCD_Command(unsigned char i)
 {
-     PORTE&=~0x04;               // RS=0
+     PORTC&=~0x04;               // RS=0
      PORTD=i;
-     PORTE |=0x02;               // RS=0,R/W=0,EN=1
-     PORTE&= ~0x02;              // RS=0,R/W=0,EN=0
+     PORTC |=0x02;               // RS=0,R/W=0,EN=1
+     PORTC&= ~0x02;              // RS=0,R/W=0,EN=0
      Delay(100);
 }
 
 void LCD_Data(char i)
 {
-    PORTE|=0x04;              //RS=1
+    PORTC|=0x04;              //RS=1
     PORTD=i;                  //Assign the value to PORTD to display
-    PORTE|=0x02;              // RS=1,R/W=0,EN=1
-    PORTE&=~0x02;             // RS=1,R/W=0,EN=0
+    PORTC|=0x02;              // RS=1,R/W=0,EN=1
+    PORTC&=~0x02;             // RS=1,R/W=0,EN=0
     Delay(100);
 }
 
