@@ -14,6 +14,7 @@ unsigned int hivalue,lovalue,adcv;
 long value;
 char Lowstring[] = "Low  Voltage";
 char Highstring[] = "High Voltage";
+char Normstring[] = "Normal Voltage";
 char *ptr;
 
 
@@ -21,13 +22,17 @@ void update_lcd(unsigned int num)
 {
    LCD_Command(0x80);               //Initialize cursor to first Position
    LCDOutput(num);
-   if(num > 105)
+   if(num > 135)
    {
        ptr = (char *)Highstring;
    }
+   else if(num < 105)
+   {
+      ptr = (char *)Lowstring;
+   }
    else
    {
-       ptr = (char *)Lowstring;
+       ptr = (char *)Normstring;
    }
    LCD_Command(0xC0);
    while(*ptr != '\0')
