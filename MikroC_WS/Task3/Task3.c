@@ -42,20 +42,20 @@ void main()
 
   unsigned int i,j;
 
-  TRISD = 0x00;   //7 Segment Display output
-  TRISA = 0x00;   //Transistor Multiplexer output
+  TRISC = 0x00;   //7 Segment Display output
+  TRISD = 0x00;   //Transistor Multiplexer output
 
   while(1)
    {
       for(i =0; i < 10; i++)
       {
-        PORTD = digits[i];
-        for(j= 0; j <4 ; j++)
+        PORTC = digits[i];
+        for(j= 0; j <3 ; j++)
         {
-          PORTA = 0x20 >> j;
-          Delay_ms(30);
+          PORTD = 4 >> j;
+          Delay_ms(1);
         }
-        Delay_ms(50);
+        //Delay_ms(10);
       }
    }
 
